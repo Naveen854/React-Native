@@ -1,31 +1,59 @@
 import {StyleSheet, Text, View, Dimensions} from 'react-native';
-import React from 'react';
+import React, {useRef} from 'react';
 import Animated, {
   useSharedValue,
   useAnimatedScrollHandler,
   interpolateColor,
   useAnimatedStyle,
-  color,
+  multiply,
 } from 'react-native-reanimated';
 
-import Slide from './Slide';
+import Slide, {SLIDE_HEIGHT} from './Slide';
+import SubSlide from './SubSlide';
 
-const {width, height} = Dimensions.get('window');
+const BORDER_RADIUS = 75;
+
+const {width} = Dimensions.get('window');
 
 interface OnboardingProps {}
 
 const slides = [
-  {label: 'Relaxed', color: '#BFEAF5'},
-  {label: 'Playful', color: '#beecc4'},
-  {label: 'Excentric', color: '#ffe4d9'},
-  {label: 'Funky', color: '#ffdddd'},
+  {
+    title: 'Relaxed',
+    subTitle: 'Find Your Outfits',
+    description:
+      "Confused about your outfit? Don't worry! Find the best outfit here!",
+    color: '#BFEAF5',
+  },
+  {
+    title: 'Playful',
+    subTitle: 'Hear it First, Wear it First',
+    description:
+      'Hating the clothes in your wardrobe? Explore hundreds of outfit ideas',
+    color: '#beecc4',
+  },
+  {
+    title: 'Excentric',
+    subTitle: 'Your Style, Your Way',
+    description:
+      'Create your individual & unique style and look amazing everyday',
+    color: '#ffe4d9',
+  },
+  {
+    title: 'Funky',
+    subTitle: 'Look Good, Feel Good',
+    description:
+      'Discover the latest trends in fashion and explore your personality',
+    color: '#ffdddd',
+  },
 ];
 
 const Onboarding = () => {
+  const scrollRef = useRef<Animated.ScrollView>(null);
   const x = useSharedValue(0);
-  // TODO : useScrollEvent
+  // TODO : useScrollHandler
   const onScroll = useAnimatedScrollHandler({
-    onScroll: (e, context) => {
+    onScroll: e => {
       x.value = e.contentOffset.x;
     },
   });
@@ -38,10 +66,16 @@ const Onboarding = () => {
     );
     return {backgroundColor: color};
   });
+
+  const transformedFooterStyles = useAnimatedStyle(() => {
+    return {transform: [{translateX: x.value * -1}]};
+  });
+
   return (
     <View style={styles.container}>
       <Animated.View style={[styles.slider, animatedBackground]}>
         <Animated.ScrollView
+          ref={scrollRef}
           horizontal
           snapToInterval={width}
           decelerationRate="fast"
@@ -49,19 +83,38 @@ const Onboarding = () => {
           bounces={false}
           scrollEventThrottle={1}
           onScroll={onScroll}>
-          {/* <Slide label="Relaxed" />
-          <Slide label="Playful" right />
-          <Slide label="Excentric" />
-          <Slide label="Funky" right /> */}
-          {slides.map(({label}, index) => (
-            <Slide key={label} right={!!(index % 2)} {...{label}} />
+          {slides.map(({title}, index) => (
+            <Slide key={title} right={!!(index % 2)} {...{title}} />
           ))}
         </Animated.ScrollView>
       </Animated.View>
       <View style={styles.footer}>
         <Animated.View
-          style={{...StyleSheet.absoluteFillObject, ...animatedBackground}}>
-          <View style={styles.footerContent}></View>
+          style={[
+            {...StyleSheet.absoluteFillObject},
+            animatedBackground,
+          ]}></Animated.View>
+        <Animated.View
+          style={[
+            styles.footerContent,
+            {width: width * slides.length},
+            transformedFooterStyles,
+          ]}>
+          {slides.map(({subTitle, description}, index) => (
+            <SubSlide
+              key={subTitle}
+              onPress={() => {
+                if (scrollRef.current) {
+                  console.log('Calling', subTitle);
+                  scrollRef.current
+                    .getNode()
+                    .scrollTo({x: width * (index + 1), animated: true});
+                }
+              }}
+              last={index === slides.length - 1}
+              {...{subTitle, description, x}}
+            />
+          ))}
         </Animated.View>
       </View>
     </View>
@@ -76,8 +129,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   slider: {
-    height: 0.61 * height,
-    borderBottomEndRadius: 75,
+    height: SLIDE_HEIGHT,
+    borderBottomEndRadius: BORDER_RADIUS,
   },
   footer: {
     flex: 1,
@@ -85,7 +138,8 @@ const styles = StyleSheet.create({
   },
   footerContent: {
     flex: 1,
+    flexDirection: 'row',
     backgroundColor: 'white',
-    borderTopLeftRadius: 75,
+    borderTopLeftRadius: BORDER_RADIUS,
   },
 });
