@@ -5,11 +5,11 @@ import Animated, {
   useAnimatedScrollHandler,
   interpolateColor,
   useAnimatedStyle,
-  multiply,
 } from 'react-native-reanimated';
 
 import Slide, {SLIDE_HEIGHT} from './Slide';
 import SubSlide from './SubSlide';
+import Dot from './Dot';
 
 const BORDER_RADIUS = 75;
 
@@ -52,7 +52,7 @@ const Onboarding = () => {
   const scrollRef = useRef<Animated.ScrollView>(null);
   const x = useSharedValue(0);
   // TODO : useScrollHandler
-  const onScroll = useAnimatedScrollHandler({
+  const scrollHandler = useAnimatedScrollHandler({
     onScroll: e => {
       x.value = e.contentOffset.x;
     },
@@ -82,7 +82,7 @@ const Onboarding = () => {
           showsHorizontalScrollIndicator={false}
           bounces={false}
           scrollEventThrottle={1}
-          onScroll={onScroll}>
+          onScroll={scrollHandler}>
           {slides.map(({title}, index) => (
             <Slide key={title} right={!!(index % 2)} {...{title}} />
           ))}
@@ -100,6 +100,11 @@ const Onboarding = () => {
             {width: width * slides.length},
             transformedFooterStyles,
           ]}>
+          <View style={styles.pagination}>
+            {slides.map((_, index) => (
+              <Dot key={index} {...{index, x, currentIndex: x.value / width}} />
+            ))}
+          </View>
           {slides.map(({subTitle, description}, index) => (
             <SubSlide
               key={subTitle}
@@ -141,5 +146,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     backgroundColor: 'white',
     borderTopLeftRadius: BORDER_RADIUS,
+  },
+  pagination: {
+    ...StyleSheet.absoluteFillObject,
+    height: BORDER_RADIUS,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
