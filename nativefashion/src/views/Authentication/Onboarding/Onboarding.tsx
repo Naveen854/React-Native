@@ -1,18 +1,17 @@
-import {StyleSheet, Text, View, Dimensions} from 'react-native';
+import {StyleSheet,  View, Dimensions} from 'react-native';
 import React from 'react';
 import Animated, {
   useSharedValue,
   useAnimatedScrollHandler,
   interpolateColor,
   useAnimatedStyle,
-  color,
 } from 'react-native-reanimated';
 
 import Slide from './Slide';
 
 const {width, height} = Dimensions.get('window');
 
-interface OnboardingProps {}
+// interface OnboardingProps {}
 
 const slides = [
   {label: 'Relaxed', color: '#BFEAF5'},
@@ -49,10 +48,6 @@ const Onboarding = () => {
           bounces={false}
           scrollEventThrottle={1}
           onScroll={onScroll}>
-          {/* <Slide label="Relaxed" />
-          <Slide label="Playful" right />
-          <Slide label="Excentric" />
-          <Slide label="Funky" right /> */}
           {slides.map(({label}, index) => (
             <Slide key={label} right={!!(index % 2)} {...{label}} />
           ))}
@@ -61,7 +56,7 @@ const Onboarding = () => {
       <View style={styles.footer}>
         <Animated.View
           style={{...StyleSheet.absoluteFillObject, ...animatedBackground}}>
-          <View style={styles.footerContent}></View>
+          <View style={styles.footerContent} />
         </Animated.View>
       </View>
     </View>
