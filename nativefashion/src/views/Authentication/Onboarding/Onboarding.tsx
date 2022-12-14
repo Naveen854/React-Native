@@ -90,10 +90,8 @@ const Onboarding = () => {
       </Animated.View>
       <View style={styles.footer}>
         <Animated.View
-          style={[
-            {...StyleSheet.absoluteFillObject},
-            animatedBackground,
-          ]}></Animated.View>
+          style={[{...StyleSheet.absoluteFillObject}, animatedBackground]}
+        />
         <Animated.View
           style={[
             styles.footerContent,
