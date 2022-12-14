@@ -92,33 +92,31 @@ const Onboarding = () => {
         <Animated.View
           style={[{...StyleSheet.absoluteFillObject}, animatedBackground]}
         />
-        <Animated.View
-          style={[
-            styles.footerContent,
-            {width: width * slides.length},
-            transformedFooterStyles,
-          ]}>
+        <View
+          style={styles.footerContent}>
           <View style={styles.pagination}>
             {slides.map((_, index) => (
-              <Dot key={index} {...{index, x, currentIndex: x.value / width}} />
+              <Dot key={index} {...{index, currentIndex: x.value / width}} />
             ))}
           </View>
-          {slides.map(({subTitle, description}, index) => (
-            <SubSlide
-              key={subTitle}
-              onPress={() => {
-                if (scrollRef.current) {
-                  console.log('Calling', subTitle);
-                  scrollRef.current
-                    .getNode()
-                    .scrollTo({x: width * (index + 1), animated: true});
-                }
-              }}
-              last={index === slides.length - 1}
-              {...{subTitle, description, x}}
-            />
-          ))}
-        </Animated.View>
+          <Animated.View style={[{flex:1,flexDirection:'row',width: width * slides.length},
+              transformedFooterStyles]}>
+            {slides.map(({subTitle, description}, index) => (
+              <SubSlide
+                key={subTitle}
+                onPress={() => {
+                  if (scrollRef.current) {
+                    scrollRef.current
+                      .getNode()
+                      .scrollTo({x: width * (index + 1), animated: true});
+                  }
+                }}
+                last={index === slides.length - 1}
+                {...{subTitle, description, x}}
+              />
+            ))}
+          </Animated.View>
+        </View>
       </View>
     </View>
   );
@@ -141,7 +139,7 @@ const styles = StyleSheet.create({
   },
   footerContent: {
     flex: 1,
-    flexDirection: 'row',
+    // flexDirection: 'row',
     backgroundColor: 'white',
     borderTopLeftRadius: BORDER_RADIUS,
   },
@@ -150,5 +148,7 @@ const styles = StyleSheet.create({
     height: BORDER_RADIUS,
     justifyContent: 'center',
     alignItems: 'center',
+    flexDirection:'row',
+    width,
   },
 });

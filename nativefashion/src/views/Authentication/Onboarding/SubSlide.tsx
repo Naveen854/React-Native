@@ -1,5 +1,5 @@
 import {StyleSheet, Text, View} from 'react-native';
-import React, {useId} from 'react';
+import React from 'react';
 import Animated from 'react-native-reanimated';
 import {Button} from '../../../components';
 
