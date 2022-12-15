@@ -1,18 +1,25 @@
-import {StyleSheet, Text, View, Dimensions} from 'react-native';
+import {StyleSheet,Image, View, Dimensions} from 'react-native';
 import React from 'react';
+
+import { Text } from '../../../components';
 
 interface SlideProps {
   title: string;
+  picture:number;
   right?: boolean;
 }
 
 const {width, height} = Dimensions.get('window');
 export const SLIDE_HEIGHT = 0.61 * height;
+export const BORDER_RADIUS = width * 0.12;
 
-const Slide = ({title, right}: SlideProps) => {
+const Slide = ({title,picture, right}: SlideProps) => {
   const multiplier = right ? 1 : -1;
   return (
     <View style={styles.container}>
+      <View style={styles.underlay}>
+        <Image style={styles.picture} source={picture} resizeMode="contain"/>
+      </View>
       <View
         style={[
           styles.titleContainer,
@@ -24,7 +31,7 @@ const Slide = ({title, right}: SlideProps) => {
             ],
           },
         ]}>
-        <Text style={styles.title}>{title}</Text>
+        <Text variant="title1" style={styles.title}>{title}</Text>
       </View>
     </View>
   );
@@ -35,6 +42,19 @@ export default Slide;
 const styles = StyleSheet.create({
   container: {
     width: width,
+    overflow:'hidden',
+  },
+  underlay:{
+    ...StyleSheet.absoluteFillObject,
+    justifyContent:'flex-end',
+  },
+  picture:{
+    ...StyleSheet.absoluteFillObject,
+    // top:SLIDE_HEIGHT-SLIDE_HEIGHT*0.01,
+    height:undefined,
+    width:undefined,
+    borderBottomRightRadius:BORDER_RADIUS,
+    alignSelf:'center',
   },
   titleContainer: {
     height: 100,
